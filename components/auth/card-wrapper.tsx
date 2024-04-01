@@ -28,8 +28,8 @@ export default function CardWrapper({
     showSocial,
 }: cardWapperProps) {
     return (
-        <div className="flex justify-center gap-2">
-            <Card className="shadow-md ">
+        <div className="flex justify-center items-center">
+            <Card className="shadow-md w-[360px]">
                 <CardHeader>
                     <Header label={headerLabel}></Header>
                 </CardHeader>

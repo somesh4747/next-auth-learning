@@ -3,7 +3,7 @@ import CardWrapper from '@/components/auth/card-wrapper'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { LoginSchema } from '@/schemas'
+import { RegisterSchema } from '@/schemas'
 
 import {
     Form,
@@ -17,15 +17,19 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { LoginErrorElememt } from '../login-error'
 import { LoginSuccessElememt } from '../login-success'
-import { login } from '@/actions/login'
 import { useState } from 'react'
 
-export default function LoginForm() {
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+import { register } from '@/actions/register'
+
+
+
+export default function RegisterForm() {
+    const form = useForm<z.infer<typeof RegisterSchema>>({
+        resolver: zodResolver(RegisterSchema),
         defaultValues: {
             email: '',
             password: '',
+            name : ''
         },
     })
 
@@ -33,9 +37,9 @@ export default function LoginForm() {
     const [error, setError] = useState<string | undefined>('')
     return (
         <CardWrapper
-            headerLabel="Welcome back!!"
-            backButtonHref="/register"
-            backButtonLabel="Don't have an account"
+            headerLabel="Register New User"
+            backButtonHref="/login"
+            backButtonLabel="Already have an account"
             showSocial
         >
             <Form {...form}>
@@ -45,14 +49,31 @@ export default function LoginForm() {
                         setError('')
                         setSuccess('')
 
-
-                        login(e).then((data) => {
+                        register(e).then((data) => {
                             setError(data.error)
                             setSuccess(data.success)
                         })
                     })}
                 >
                     <div className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            placeholder="yourName"
+                                            type="text"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="email"
@@ -81,7 +102,7 @@ export default function LoginForm() {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            placeholder="****"
+                                            placeholder="******"
                                             type="password"
                                         />
                                     </FormControl>
@@ -92,7 +113,7 @@ export default function LoginForm() {
                         <LoginErrorElememt message={error} />
                         <LoginSuccessElememt message={success} />
                         <Button type="submit" className="w-full">
-                            Login
+                            Register new User
                         </Button>
                     </div>
                 </form>

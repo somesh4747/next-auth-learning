@@ -11,7 +11,7 @@ interface backButtonProps {
 export const BackButton = ({ href, label }: backButtonProps) => {
     const navigate = useRouter()
     return (
-        <Button
+        <Button className='w-full'
             variant={'link'}
             onClick={() => {
                 navigate.push(href)

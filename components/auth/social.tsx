@@ -5,11 +5,11 @@ import { Button } from '../ui/button'
 
 export const Social = () => {
     return (
-        <div className="flex  justify-center gap-2 w-full">
-            <Button variant={'outline'}>
+        <div className="flex justify-center gap-2 w-full">
+            <Button variant={'outline'} className='grow'>
                 <FcGoogle />
             </Button>
-            <Button variant={'outline'}>
+            <Button variant={'outline'} className='grow'>
                 <FaGithub />
             </Button>
         </div>

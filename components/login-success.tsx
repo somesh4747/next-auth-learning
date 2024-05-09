@@ -9,7 +9,7 @@ export const LoginSuccessElememt = ({ message }: LoginSuccessProps) => {
     if (!message) return null
 
     return (
-        <div className=" flex justify-start space-x-2 items-center bg-green-100 text-green-700 rounded-md p-3">
+        <div className=" flex justify-center gap-4 items-center space-x-2 bg-green-100 text-green-700 rounded-md p-3">
             <CheckCircledIcon />
             <p>{message}</p>
         </div>

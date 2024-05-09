@@ -14,9 +14,10 @@ export default function AuthLayout({
                 </Link>
 
                 <Button>LogOut</Button>
-                <Button>
-                    <Link href={'/'}>Back to Home</Link>
-                </Button>
+
+                <Link href={'/'}>
+                    <Button>Back to home</Button>
+                </Link>
             </nav>
 
             {children}

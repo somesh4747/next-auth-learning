@@ -17,11 +17,9 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { LoginErrorElememt } from '../login-error'
 import { LoginSuccessElememt } from '../login-success'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import { register } from '@/actions/register'
-
-
 
 export default function RegisterForm() {
     const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -29,12 +27,15 @@ export default function RegisterForm() {
         defaultValues: {
             email: '',
             password: '',
-            name : ''
+            name: '',
         },
     })
 
     const [success, setSuccess] = useState<string | undefined>('')
     const [error, setError] = useState<string | undefined>('')
+
+    const [isPending, startTransition] = useTransition()
+
     return (
         <CardWrapper
             headerLabel="Register New User"
@@ -48,10 +49,11 @@ export default function RegisterForm() {
                         //
                         setError('')
                         setSuccess('')
-
-                        register(e).then((data) => {
-                            setError(data.error)
-                            setSuccess(data.success)
+                        startTransition(() => {
+                            register(e).then((data) => {
+                                setError(data.error)
+                                setSuccess(data.success)
+                            })
                         })
                     })}
                 >
@@ -68,6 +70,7 @@ export default function RegisterForm() {
                                             {...field}
                                             placeholder="yourName"
                                             type="text"
+                                            disabled={isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -86,6 +89,7 @@ export default function RegisterForm() {
                                             {...field}
                                             placeholder="somesh@email.com"
                                             type="email"
+                                            disabled={isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -104,6 +108,7 @@ export default function RegisterForm() {
                                             {...field}
                                             placeholder="******"
                                             type="password"
+                                            disabled={isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -112,10 +117,10 @@ export default function RegisterForm() {
                         />
                         <LoginErrorElememt message={error} />
                         <LoginSuccessElememt message={success} />
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full" disabled={isPending}>
                             Register new User
                         </Button>
-                    </div>
+                    </div>~
                 </form>
             </Form>
         </CardWrapper>

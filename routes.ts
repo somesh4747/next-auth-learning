@@ -2,7 +2,7 @@
  * public routes which can be accessed from anywhere
  */
 
-export const publicRoutes = ['/']
+export const publicRoutes = ['/', '/new-verification']
 
 /**
  * routes for authentication

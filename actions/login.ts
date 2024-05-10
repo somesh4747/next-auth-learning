@@ -10,6 +10,7 @@ import { signIn } from '@/auth' //its actually using next-auth server side
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { generateVerificationToken } from '@/lib/tokens'
 import { getUserByEmail } from '@/data/user'
+import { sendVerificationEmail } from '@/lib/mail'
 
 export const login = async (values: Z.infer<typeof LoginSchema>) => {
     const dataValidation = LoginSchema.safeParse(values)
@@ -24,11 +25,19 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
 
     const existingUser = await getUserByEmail(email)
 
+    if (!existingUser) return { error: 'email is not registered' }
+
     if (!existingUser?.emailVerified) {
         const token = await generateVerificationToken(existingUser?.email)
 
-        return { success: 'Verification email has been sent' || '' }
+        await sendVerificationEmail(token.email, token.token)
+
+        return {
+            success:
+                'Verification email has been sent, verify the email before login',
+        }
     }
+
     try {
         await signIn('credentials', {
             email,
@@ -37,7 +46,7 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
         })
     } catch (error) {
         if (error instanceof AuthError) {
-            switch (error.type) {
+            switch (error?.type) {
                 case 'CredentialsSignin':
                     return {
                         error: 'invalid credentials',
@@ -51,5 +60,4 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
 
         throw error
     }
-    
 }

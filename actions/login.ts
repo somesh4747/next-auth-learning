@@ -11,6 +11,7 @@ import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { generateVerificationToken } from '@/lib/tokens'
 import { getUserByEmail } from '@/data/user'
 import { sendVerificationEmail } from '@/lib/mail'
+import { resetMailSend } from './pass-reset'
 
 export const login = async (values: Z.infer<typeof LoginSchema>) => {
     const dataValidation = LoginSchema.safeParse(values)
@@ -19,6 +20,14 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
         return {
             error: 'invalid fields' || '',
         }
+    }
+    console.log(dataValidation.data);
+    
+    if (dataValidation.data.resetPass === true) {
+        // resetMailSend(dataValidation.data.email)
+        console.log(dataValidation.data);
+        
+        return { success: 'Reset mail has been sent' }
     }
 
     const { email, password } = dataValidation.data

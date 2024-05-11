@@ -6,8 +6,6 @@ import bcrypt from 'bcryptjs'
 import github from 'next-auth/providers/github'
 import google from 'next-auth/providers/google'
 
-
-
 export default {
     providers: [
         github({
@@ -21,6 +19,8 @@ export default {
         credentials({
             async authorize(credentials) {
                 const validatedFields = LoginSchema.safeParse(credentials)
+                // console.log(validatedFields.success);  
+                
                 if (validatedFields.success) {
                     const { email, password } = validatedFields.data
 
@@ -32,7 +32,6 @@ export default {
                         password,
                         user.password
                     )
-                    // const isPasswordMatched
 
                     if (isPasswordMatched) {
                         return user

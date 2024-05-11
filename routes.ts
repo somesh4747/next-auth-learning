@@ -2,13 +2,13 @@
  * public routes which can be accessed from anywhere
  */
 
-export const publicRoutes = ['/', '/new-verification']
+export const publicRoutes = ['/', '/new-verification', '/reset-password']
 
 /**
  * routes for authentication
  */
 
-export const authRoutes = ['/login', '/register', '/error', 'api/auth/error']
+export const authRoutes = ['/login', '/register', '/error', 'api/auth/error', '/reset']
 
 /**
  * api authentication routes

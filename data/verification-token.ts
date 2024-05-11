@@ -20,3 +20,13 @@ export const getVerficationTokenByToken = async (token: string) => {
         return null
     }
 }
+export const getPasswordVerificationToken = async (token: string) => {
+    try {
+        const verficatonToken = await db.passwordVerficationToken.findUnique({
+            where: { token },
+        })
+        return verficatonToken
+    } catch {
+        return null
+    }
+}

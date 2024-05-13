@@ -8,10 +8,13 @@ import { AuthError } from 'next-auth'
 
 import { signIn } from '@/auth' //its actually using next-auth server side
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
-import { generateVerificationToken } from '@/lib/tokens'
+
 import { getUserByEmail } from '@/data/user'
-import { sendVerificationEmail } from '@/lib/mail'
-import { resetMailSend } from './pass-reset'
+import { sendVerificationEmail, sendTwoFactorMail } from '@/lib/mail'
+import { generateVerificationToken, generateTwoFactorToken } from '@/lib/tokens'
+import { getTwoFactorTokenByEmail } from '@/data/two-factor-token'
+import { db } from '@/lib/db'
+import {  getTwoFactorConfimationByUserId } from '@/data/two-factor-cofirmation'
 
 export const login = async (values: Z.infer<typeof LoginSchema>) => {
     const dataValidation = LoginSchema.safeParse(values)
@@ -21,16 +24,9 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
             error: 'invalid fields' || '',
         }
     }
-    console.log(dataValidation.data);
-    
-    if (dataValidation.data.resetPass === true) {
-        // resetMailSend(dataValidation.data.email)
-        console.log(dataValidation.data);
-        
-        return { success: 'Reset mail has been sent' }
-    }
 
-    const { email, password } = dataValidation.data
+    const { email, password, code } = dataValidation.data
+    console.log(code)
 
     const existingUser = await getUserByEmail(email)
 
@@ -44,6 +40,56 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
         return {
             success:
                 'Verification email has been sent, verify the email before login',
+        }
+    }
+    //TODO ::: || ==================timing for resending the verification code for 2FA==================//
+
+    if (existingUser.isTwofactorEnabled && existingUser.email) {
+        if (code) {
+            const existing2FAToken = await getTwoFactorTokenByEmail(
+                existingUser.email
+            )
+            if (!existing2FAToken) return { error: 'invalid code' }
+
+            if (existing2FAToken.token !== code)
+                return { error: 'invalid code' }
+
+            if (new Date(existing2FAToken.expires) < new Date())
+                return { error: 'code has expired' }
+
+            await db.twoFactorVerificationToken.delete({
+                where: {
+                    id: existing2FAToken.id,
+                },
+            })
+
+            const existingConfirmation = await getTwoFactorConfimationByUserId(
+                existingUser.id
+            )
+            if (existingConfirmation) {
+                await db.twoFactorConfirmaitonModel.delete({
+                    where: {
+                        id: existingConfirmation.id,
+                    },
+                })
+            }
+
+            await db.twoFactorConfirmaitonModel.create({
+                data: {
+                    userId: existingUser.id,
+                },
+            })
+        } else {
+            const twoFactorToken = await generateTwoFactorToken(
+                existingUser.email
+            )
+
+            await sendTwoFactorMail(twoFactorToken.email, twoFactorToken.token)
+
+            return {
+                twoFactorStatus: true,
+                // success: 'Two factor authentication mail has been sent',
+            }
         }
     }
 

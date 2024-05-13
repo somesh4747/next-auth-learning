@@ -5,7 +5,8 @@ import { db } from './lib/db'
 import authConfig from './auth.config'
 import { getUserById } from './data/user'
 import { userRole } from '@prisma/client'
-import { use } from 'react'
+
+import { getTwoFactorConfimationByUserId } from './data/two-factor-cofirmation'
 
 export const {
     handlers: { GET, POST },
@@ -40,6 +41,21 @@ export const {
             if (!existingUser?.emailVerified) {
                 return false
             }
+            //=============== my own time base two factor authentication
+            if (existingUser.isTwofactorEnabled) {
+                const twoFactorStatus = await getTwoFactorConfimationByUserId(
+                    existingUser.id
+                )
+                // console.log();
+                if (!twoFactorStatus) return false
+
+                //delete two factor confirmation for next sign in
+                await db.twoFactorConfirmaitonModel.delete({
+                    where: {
+                        userId: existingUser.id,
+                    },
+                })
+            }
             return true
         },
         async jwt({ token }) {
@@ -58,6 +74,7 @@ export const {
             if (token.sub && session.user) {
                 session.user.id = token.sub
             }
+            console.log(session.sessionToken)
 
             if (token.role && session.user) {
                 session.user.role = token.role as userRole

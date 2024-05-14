@@ -10,7 +10,7 @@ export const LoginErrorElememt = ({message} : loginErrorProps) => {
 
     return (
         <div className=' flex justify-center gap-4 items-center bg-red-100 text-red-700 rounded-md p-3'>
-            <ExclamationTriangleIcon />
+            <ExclamationTriangleIcon style={{transform : 'scale(1.5)'}} className='ml-3' />
             <p>{message}</p>
         </div>
     )

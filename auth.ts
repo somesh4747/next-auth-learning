@@ -7,6 +7,7 @@ import { getUserById } from './data/user'
 import { userRole } from '@prisma/client'
 
 import { getTwoFactorConfimationByUserId } from './data/two-factor-cofirmation'
+import { twoFactorHandleFunction } from './actions/two-FA'
 
 export const {
     handlers: { GET, POST },
@@ -30,11 +31,12 @@ export const {
     },
 
     callbacks: {
-        async signIn({ user, account }) {
+        async signIn({ user, account, email }) {
             //if Oauth providers then dont need to check for email verification
             if (account?.provider !== 'credentials') {
                 return true
             }
+
 
             // /prevent signin without email verification using credentionals
             const existingUser = await getUserById(user.id)
@@ -46,8 +48,10 @@ export const {
                 const twoFactorStatus = await getTwoFactorConfimationByUserId(
                     existingUser.id
                 )
-                // console.log();
-                if (!twoFactorStatus) return false
+
+                if (!twoFactorStatus) {
+                    return false
+                }
 
                 //delete two factor confirmation for next sign in
                 await db.twoFactorConfirmaitonModel.delete({
@@ -74,7 +78,7 @@ export const {
             if (token.sub && session.user) {
                 session.user.id = token.sub
             }
-            console.log(session.sessionToken)
+
 
             if (token.role && session.user) {
                 session.user.role = token.role as userRole

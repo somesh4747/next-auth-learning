@@ -14,7 +14,9 @@ import { sendVerificationEmail, sendTwoFactorMail } from '@/lib/mail'
 import { generateVerificationToken, generateTwoFactorToken } from '@/lib/tokens'
 import { getTwoFactorTokenByEmail } from '@/data/two-factor-token'
 import { db } from '@/lib/db'
-import {  getTwoFactorConfimationByUserId } from '@/data/two-factor-cofirmation'
+import { getTwoFactorConfimationByUserId } from '@/data/two-factor-cofirmation'
+import { credentialCheck } from './credential-check'
+import { error } from 'console'
 
 export const login = async (values: Z.infer<typeof LoginSchema>) => {
     const dataValidation = LoginSchema.safeParse(values)
@@ -26,7 +28,6 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
     }
 
     const { email, password, code } = dataValidation.data
-    console.log(code)
 
     const existingUser = await getUserByEmail(email)
 
@@ -80,6 +81,14 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
                 },
             })
         } else {
+            //TODO: complete the credential check and verify the password then send 2FA email
+            const isCredentialsMatch = await credentialCheck(email, password)
+
+            if (!isCredentialsMatch) {
+                return { error: 'invalid Credential' }
+            }
+
+            //after checking credentials it is sending mails
             const twoFactorToken = await generateTwoFactorToken(
                 existingUser.email
             )
@@ -88,7 +97,7 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
 
             return {
                 twoFactorStatus: true,
-                // success: 'Two factor authentication mail has been sent',
+                success: 'Two factor authentication mail has been sent',
             }
         }
     }

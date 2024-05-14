@@ -1,6 +1,7 @@
 'use server'
 
 import { Resend } from 'resend'
+import TwoFactorEmailTemplate from '@/components/mail/two-factor'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -28,6 +29,6 @@ export const sendTwoFactorMail = async (email: string, token: string) => {
         from: 'onboarding@resend.dev',
         to: email,
         subject: '2FA Mail',
-        html: `<p>${token} this is your confirmation code</p>`,
+        react: TwoFactorEmailTemplate({ verificationCode: token, time: '5' }),
     })
 }

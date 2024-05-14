@@ -18,7 +18,6 @@ export const LoginButton = ({
         <span
             className=""
             onClick={() => {
-                // console.log('login button clicked!!!')
                 router.push('/login')
             }}
         >

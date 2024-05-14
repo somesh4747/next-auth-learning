@@ -10,7 +10,6 @@ export const getUserByEmail = async (email: string) => {
 
         return user
     } catch (error) {
-        console.log(error)
         return null
     }
 }
@@ -25,7 +24,6 @@ export const getUserById = async (id: string | undefined) => {
 
         return user
     } catch (error) {
-        console.log(error)
         return null
     }
 }

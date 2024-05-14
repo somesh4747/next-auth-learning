@@ -22,7 +22,6 @@ import { LoginSuccessElememt } from '../login-success'
 import { login } from '@/actions/login'
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '../ui/input-otp'
 
 export default function LoginForm() {
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -74,6 +73,50 @@ export default function LoginForm() {
                     })}
                 >
                     <div className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            placeholder="somesh@email.com"
+                                            type="email"
+                                            disabled={isPending}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            placeholder="****"
+                                            type="password"
+                                            disabled={isPending}
+                                        />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <br />
+                        <Link href={'/reset'} className="hover:underline ">
+                            Reset Password?
+                        </Link>
+
                         {showTwofactor ? (
                             <>
                                 <FormField
@@ -97,53 +140,7 @@ export default function LoginForm() {
                                 />
                             </>
                         ) : (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Email</FormLabel>
-
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder="somesh@email.com"
-                                                    type="email"
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Password</FormLabel>
-
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder="****"
-                                                    type="password"
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Link
-                                    href={'/reset'}
-                                    className="hover:underline "
-                                >
-                                    Reset Password?
-                                </Link>
-                            </>
+                            ''
                         )}
 
                         <LoginSuccessElememt message={success} />

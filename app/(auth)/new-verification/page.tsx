@@ -1,4 +1,6 @@
 'use client'
+//this is for email verification
+
 import React, { useState } from 'react'
 import CardWrapper from '@/components/auth/card-wrapper'
 import { Button } from '@/components/ui/button'
@@ -11,9 +13,10 @@ import { LoginSuccessElememt } from '@/components/login-success'
 function varificationPage() {
     const params = useSearchParams()
     const token = params.get('token')
-    console.log(token)
+
     const [success, setSuccess] = useState<string>('')
     const [error, setError] = useState<string>('')
+    const [verifyStatus, setVerifyStatus] = useState<boolean>(false)
 
     return (
         <div>
@@ -22,26 +25,41 @@ function varificationPage() {
                 backButtonHref="/login"
                 backButtonLabel="Back to login"
             >
-                <PulseLoader
-                    color="#ffff"
-                    cssOverride={{}}
-                    speedMultiplier={3}
-                />
-                <Button
-                    className="w-full"
-                    onClick={() => {
-                        if (!token) return null
+                <div className="flex flex-col items-center space-y-5">
+                    {verifyStatus ? (
+                        <PulseLoader
+                            color="#ffff"
+                            cssOverride={{}}
+                            speedMultiplier={1}
+                        />
+                    ) : (
+                        <>
+                            <Button
+                                className="w-full"
+                                onClick={() => {
+                                    if (!token) return null
 
-                        EmailVerification(token).then((data) => {
-                            setSuccess(data?.success)
-                            setError(data?.error)
-                        })
-                    }}
-                >
-                    Verify
-                </Button>
-                <LoginSuccessElememt message={success} />
-                <LoginErrorElememt message={error} />
+                                    setVerifyStatus(true)
+                                    EmailVerification(token).then((data) => {
+                                        if (data.success) {
+                                            setVerifyStatus(false)
+                                            setSuccess(data?.success)
+                                        }
+
+                                        if (data.error) {
+                                            setVerifyStatus(false)
+                                            setError(data?.error)
+                                        }
+                                    })
+                                }}
+                            >
+                                Verify
+                            </Button>
+                            <LoginSuccessElememt message={success} />
+                            <LoginErrorElememt message={error} />
+                        </>
+                    )}
+                </div>
             </CardWrapper>
         </div>
     )

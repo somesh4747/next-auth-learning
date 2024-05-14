@@ -58,7 +58,7 @@ export const twoFactorHandleFunction = async (email: string, code: string) => {
 
             return {
                 twoFactorStatus: true,
-                // success: 'Two factor authentication mail has been sent',
+                success: 'New Two factor mail has been sent',
             }
         }
     }

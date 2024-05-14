@@ -20,8 +20,11 @@ import { Button } from '../ui/button'
 import { LoginErrorElememt } from '../login-error'
 import { LoginSuccessElememt } from '../login-success'
 import { login } from '@/actions/login'
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import Link from 'next/link'
+import { ReloadIcon } from '@radix-ui/react-icons'
+
+import { twoFactorHandleFunction } from '@/actions/two-FA'
 
 export default function LoginForm() {
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -33,11 +36,18 @@ export default function LoginForm() {
         },
     })
 
-    const [isPending, setTrasition] = useTransition()
-    const [success, setSuccess] = useState<string>('')
-    const [showTwofactor, setshowTwofactor] = useState<boolean>(false)
+    const emailRef = useRef(null)
 
+    const [isPending, setTrasition] = useTransition() // transition for login function
+    const [success, setSuccess] = useState<string>('')
     const [error, setError] = useState<string>('')
+
+    //managing states for two factor auth handing
+    const [showTwofactor, setShowTwofactor] = useState<boolean>(false)
+    const [is2FaPending, set2FaTransition] = useState(false)
+    const [Second2fa, set2faSecond] = useState<number>(60) // timing for resend 2fa
+
+    // handing oAuthLinkedAccountError through url params
     const params = useSearchParams()
     const providerEmailExisted =
         params.get('error') == 'OAuthAccountNotLinked'
@@ -65,7 +75,7 @@ export default function LoginForm() {
                                     if (data?.success) setSuccess(data.success)
 
                                     if (data?.twoFactorStatus) {
-                                        setshowTwofactor(true)
+                                        setShowTwofactor(true)
                                     }
                                 })
                                 .catch(() => setError('something went wrong'))
@@ -83,6 +93,7 @@ export default function LoginForm() {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            ref={emailRef}
                                             placeholder="somesh@email.com"
                                             type="email"
                                             disabled={isPending}
@@ -141,6 +152,62 @@ export default function LoginForm() {
                             </>
                         ) : (
                             ''
+                        )}
+                        {showTwofactor ? (
+                            <>
+                                <Button
+                                    variant={'secondary'}
+                                    disabled={is2FaPending}
+                                    type="button"
+                                    onClick={async () => {
+                                        setSuccess('')
+                                        setError('')
+
+                                        //sending 2fa mail usign useRef due limitation of form handing
+                                        if (!emailRef.current) return
+
+                                        const email = emailRef.current.value
+
+                                        twoFactorHandleFunction(email, '').then(
+                                            (data) => {
+                                                if (data?.error)
+                                                    setError(data.error)
+
+                                                if (data?.success)
+                                                    setSuccess(data.success)
+                                            }
+                                        )
+                                        //managing the whole timer for resend 2FA mail
+                                        set2FaTransition(true)
+                                        const interval = setInterval(() => {
+                                            set2faSecond(
+                                                (prevSec) => prevSec - 1
+                                            )
+                                        }, 1000)
+                                        await new Promise((res) => {
+                                            setTimeout(() => {
+                                                res(true)
+                                            }, 60000)
+                                        })
+                                        clearInterval(interval)
+                                        set2FaTransition(false)
+                                        set2faSecond(60)
+                                    }}
+                                >
+                                    {is2FaPending ? (
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : (
+                                        ''
+                                    )}
+                                    {is2FaPending ? (
+                                        <>{Second2fa}s</>
+                                    ) : (
+                                        'Resend mail'
+                                    )}
+                                </Button>
+                            </>
+                        ) : (
+                            <></>
                         )}
 
                         <LoginSuccessElememt message={success} />

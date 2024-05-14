@@ -16,7 +16,7 @@ import { getTwoFactorTokenByEmail } from '@/data/two-factor-token'
 import { db } from '@/lib/db'
 import { getTwoFactorConfimationByUserId } from '@/data/two-factor-cofirmation'
 import { credentialCheck } from './credential-check'
-import { error } from 'console'
+
 
 export const login = async (values: Z.infer<typeof LoginSchema>) => {
     const dataValidation = LoginSchema.safeParse(values)
@@ -33,7 +33,7 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
 
     if (!existingUser) return { error: 'email is not registered' }
 
-    if (!existingUser?.emailVerified) {
+    if (!existingUser?.emailVerified && existingUser.email) {
         const token = await generateVerificationToken(existingUser?.email)
 
         await sendVerificationEmail(token.email, token.token)
@@ -97,7 +97,7 @@ export const login = async (values: Z.infer<typeof LoginSchema>) => {
 
             return {
                 twoFactorStatus: true,
-                success: 'Two factor authentication mail has been sent',
+                success: 'Two factor Auth mail has been sent',
             }
         }
     }

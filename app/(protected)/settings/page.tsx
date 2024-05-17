@@ -1,21 +1,9 @@
-// 'use client'
-'use server'
-import { auth, signOut } from '@/auth'
-import { json } from 'stream/consumers'
-import { Button } from '@/components/ui/button'
+'use client'
 
-export default async function SettingsPage() {
-    const session = await auth()
+import { useCurrentUser } from '@/hooks/use-current-user'
 
-    return (
-        <div className='' >
-            {JSON.stringify(session)}
-            <form action={ async () => {
-                'use server'
-                await signOut()
-            }}>
-                <Button type='submit'>Sign Out</Button>
-            </form>
-        </div>
-    )
+export default function SettingsPage() {
+    const user = useCurrentUser()
+
+    return <div className='text-balance w-[300px] h-[200px]' >{JSON.stringify(user)}</div>
 }

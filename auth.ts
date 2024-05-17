@@ -37,7 +37,6 @@ export const {
                 return true
             }
 
-
             // /prevent signin without email verification using credentionals
             const existingUser = await getUserById(user.id)
             if (!existingUser?.emailVerified) {
@@ -71,6 +70,7 @@ export const {
             if (!existingUser) return token
 
             token.role = existingUser.role
+            token.isTwofactorEnabled = existingUser.isTwofactorEnabled
 
             return token
         },
@@ -79,9 +79,11 @@ export const {
                 session.user.id = token.sub
             }
 
-
             if (token.role && session.user) {
                 session.user.role = token.role as userRole
+            }
+            if (token.role && session.user) {
+                session.user.isTwofactorEnabled = token.isTwofactorEnabled as boolean
             }
 
             return session

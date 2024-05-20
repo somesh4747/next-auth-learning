@@ -7,7 +7,7 @@ export default function Home() {
     
     return (
         <main className="p-3 flex flex-col items-center ">
-            <div className="text-5xl text-gray-700 drop-shadow-lg ">
+            <div className="text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
                 Authentication
             </div>
             <div className="flex justify-center items-center mt-7">

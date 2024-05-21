@@ -14,8 +14,13 @@ declare module 'next-auth' {
     interface Session {
         user: {
             /** The user's postal address. */
+            // extending the session for type safety
             role: userRole
             isTwofactorEnabled: boolean
+            id: string
+            name: string | null | undefined
+            email: string
+            image: string | null
         }
     }
 }

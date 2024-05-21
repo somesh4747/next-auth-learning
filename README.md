@@ -6,7 +6,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 # Feature TODO:
 1. user can add account image
-2. have to brainstorm a liitle 
+2. new upadated email is already present or not ?
+3. reset password in settings page 
+4. 
+5.
+6.
 
 
 First, run the development server:

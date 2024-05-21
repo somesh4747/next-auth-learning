@@ -7,7 +7,6 @@ import { getUserById } from './data/user'
 import { userRole } from '@prisma/client'
 
 import { getTwoFactorConfimationByUserId } from './data/two-factor-cofirmation'
-import { twoFactorHandleFunction } from './actions/two-FA'
 
 export const {
     handlers: { GET, POST },
@@ -62,6 +61,8 @@ export const {
             return true
         },
         async jwt({ token }) {
+            // console.log('called jwt');
+            
             if (!token.sub) {
                 return token
             }
@@ -72,9 +73,15 @@ export const {
             token.role = existingUser.role
             token.isTwofactorEnabled = existingUser.isTwofactorEnabled
 
+            //this will change userName and email when 'api/auth/session' is called during a update in '/settings' page
+            token.name = existingUser.name
+            token.email = existingUser.email
+
             return token
         },
         async session({ token, session }) {
+            // console.log('called session');
+
             if (token.sub && session.user) {
                 session.user.id = token.sub
             }
@@ -83,7 +90,14 @@ export const {
                 session.user.role = token.role as userRole
             }
             if (token.role && session.user) {
-                session.user.isTwofactorEnabled = token.isTwofactorEnabled as boolean
+                session.user.isTwofactorEnabled =
+                    token.isTwofactorEnabled as boolean
+            }
+
+            //as JWT callback run first so it will change the tokens and we can implement those using the session callback
+            if (session.user && token.email) {
+                session.user.name = token.name
+                session.user.email = token.email
             }
 
             return session

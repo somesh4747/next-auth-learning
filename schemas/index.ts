@@ -37,3 +37,14 @@ export const resetPageScheme = z.object({
         message: 'email is required',
     }),
 })
+
+export const userNameUpdateSchema = z.object({
+    name: z.string().min(6, {
+        message: 'minimum 6 characters required',
+    }),
+})
+export const userEmailUpdateSchema = z.object({
+    email: z.string().email({
+        message: 'email is required',
+    }),
+})

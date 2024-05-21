@@ -1,6 +1,7 @@
 'use client'
 
 import { UserButton } from '@/components/auth/user-button'
+import { ThemeToggle } from '@/components/theme-button'
 import { Button } from '@/components/ui/button'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { signOut, useSession } from 'next-auth/react'
@@ -29,7 +30,8 @@ const Navbar = () => {
                         <Link href={'/admin'}>Admin</Link>
                     </Button>
                 </div>
-                <div>
+                <div className='flex gap-2'> 
+                    <ThemeToggle />
                     <UserButton />
                 </div>
             </nav>

@@ -38,56 +38,58 @@ function sendResetMailPage() {
     })
 
     return (
-        <CardWrapper
-            backButtonLabel="back to login"
-            backButtonHref="/login"
-            headerLabel="Email for Resetting password"
-        >
-            <FormProvider {...form}>
-                <form
-                    onSubmit={form.handleSubmit((e) => {
-                        //
-                        setTrasition(() => {
-                            resetMailSend(e.email).then((data) => {
-                                setSuccess(data?.success)
-                                setError(data?.error)
+        <div>
+            <CardWrapper
+                backButtonLabel="back to login"
+                backButtonHref="/login"
+                headerLabel="Email for Resetting password"
+            >
+                <FormProvider {...form}>
+                    <form
+                        onSubmit={form.handleSubmit((e) => {
+                            //
+                            setTrasition(() => {
+                                resetMailSend(e.email).then((data) => {
+                                    if (data.success) setSuccess(data?.success)
+                                    if (data.error) setError(data?.error)
+                                })
                             })
-                        })
-                    })}
-                >
-                    <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Enter your Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="email"
-                                            type="email"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        })}
+                    >
+                        <div className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Enter your Email</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="email"
+                                                type="email"
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <LoginErrorElememt message={error} />
-                        <LoginSuccessElememt message={success} />
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isPending}
-                        >
-                            Reset
-                        </Button>
-                    </div>
-                </form>
-            </FormProvider>
-        </CardWrapper>
+                            <LoginErrorElememt message={error} />
+                            <LoginSuccessElememt message={success} />
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={isPending}
+                            >
+                                Reset
+                            </Button>
+                        </div>
+                    </form>
+                </FormProvider>
+            </CardWrapper>
+        </div>
     )
 }
 

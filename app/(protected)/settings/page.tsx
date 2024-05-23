@@ -12,6 +12,12 @@ import { DialogForEmailUpdate } from '@/app/(protected)/settings/_components/ema
 
 import { useTransition } from 'react'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
+
+import { useRouter } from 'next/router'
+import { UserButton } from '@/components/auth/user-button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { FaUser } from 'react-icons/fa'
 
 export default function SettingsPage() {
     const { toast } = useToast()
@@ -42,62 +48,89 @@ export default function SettingsPage() {
                             />
                         </div>
                     </div>
+                    {user?.isOauth ? (
+                        ''
+                    ) : (
+                        <>
+                            <div
+                                id="email"
+                                className="flex justify-between items-center w-full"
+                            >
+                                <p>Mail</p>
+                                <div>
+                                    <DialogForEmailUpdate
+                                        triggerText={user?.email}
+                                        dialogTitle="Edit Email "
+                                    />
+                                </div>
+                            </div>
+                            <div
+                                id="resetPassword"
+                                className="flex justify-between items-center w-full"
+                            >
+                                <p>Password</p>
+                                <div>
+                                    <Link
+                                        href={'/reset'}
+                                        className="hover:underline "
+                                    >
+                                        Reset Password?
+                                    </Link>
+                                </div>
+                            </div>
 
-                    <div
-                        id="email"
-                        className="flex justify-between items-center w-full"
-                    >
-                        <p>Mail</p>
-                        <div>
-                            <DialogForEmailUpdate
-                                triggerText={user?.email}
-                                dialogTitle="Edit Email "
-                            />
-                        </div>
-                    </div>
+                            <div
+                                id="twoFactor"
+                                className="flex justify-between items-center w-full"
+                            >
+                                <p>Two Factor Auth</p>
+                                <Switch
+                                    disabled={isPending}
+                                    defaultChecked={user?.isTwofactorEnabled}
+                                    onCheckedChange={() => {
+                                        setTransition(() => {
+                                            userTwoFactorChange(
+                                                !user?.isTwofactorEnabled
+                                            ).then((data) => {
+                                                update() // for client session update
+                                                if (data) {
+                                                    toast({
+                                                        title: 'Two Factor is On',
+                                                        description:
+                                                            'have to enter OTP during Login',
+                                                    })
+                                                } else {
+                                                    toast({
+                                                        title: 'Two Factor is Off',
+                                                        description:
+                                                            'That might be a security issue',
+                                                        variant: 'destructive',
+                                                    })
+                                                }
+                                            })
+                                        })
+                                    }}
+                                />
+                            </div>
+                        </>
+                    )}
                     <div
                         id="image"
                         className="flex justify-between items-center w-full"
                     >
                         <p>Image</p>
                         {user?.image ? (
-                            <img src={user?.image} alt="_user_image" />
+                            <div>
+                                <Avatar>
+                                    <AvatarImage src={user?.image || ''} />
+                                    <AvatarFallback className="bg-green-500 ">
+                                        <FaUser className="text-white" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
                         ) : (
                             'no image'
                         )}
-                    </div>
-                    <div
-                        id="image"
-                        className="flex justify-between items-center w-full"
-                    >
-                        <p>Two Factor Auth</p>
-                        <Switch
-                            disabled={isPending}
-                            defaultChecked={user?.isTwofactorEnabled}
-                            onCheckedChange={() => {
-                                setTransition(() => {
-                                    userTwoFactorChange(
-                                        !user?.isTwofactorEnabled
-                                    ).then((data) => {
-                                        update() // for client session update
-                                        if (data) {
-                                            toast({
-                                                title: 'Two Factor is On',
-                                                description:
-                                                    'have to enter OTP during Login',
-                                            })
-                                        } else {
-                                            toast({
-                                                title: 'Two Factor is Off',
-                                                description:
-                                                    'That might be a security issue',
-                                                variant: 'destructive',
-                                            })
-                                        }
-                                    })
-                                })
-                            }}
-                        />
                     </div>
                 </CardContent>
             </Card>

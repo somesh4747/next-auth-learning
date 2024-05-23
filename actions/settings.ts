@@ -2,10 +2,13 @@
 
 import { db } from '@/lib/db'
 
-import { getUserById } from '@/data/user'
+import { getUserByEmail, getUserById } from '@/data/user'
 import { currentUser } from '@/lib/auth'
 import { userEmailUpdateSchema, userNameUpdateSchema } from '@/schemas'
 import { z } from 'zod'
+
+import { generateVerificationToken } from '@/lib/tokens'
+import { sendVerificationEmail } from '@/lib/mail'
 
 export const userNameChange = async (
     values: z.infer<typeof userNameUpdateSchema>
@@ -42,30 +45,65 @@ export const userEmailChange = async (
 
     if (!validData.success) {
         return {
-            error: 'fill proper details',
+            error: 'fill properly',
         }
     }
+
+    const { email: enteredEmail } = validData.data
+
     const user = await currentUser()
+
+    if (user?.isOauth) return // oauth providers should not update these settings at all
 
     if (!user?.id) return { error: 'not found' }
 
-    //TODO : check if the entered email is already present or not.....
-    const existingUser = await getUserById(user?.id)
+    //TODO : check if the entered email is already present or not.....--> status: DONE
+    const existingUser = await getUserByEmail(enteredEmail)
 
-    await db.user.update({
-        where: {
-            id: existingUser?.id,
-        },
-        data: {
-            email: validData.data.email,
-        },
-    })
-    return {
-        success: 'successfully updated',
+    if (user?.email === enteredEmail) {
+        return { error: 'already in use' }
     }
+    if (existingUser) {
+        return { error: 'email is already present' }
+    }
+
+    if (!existingUser) {
+        await db.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                emailVerified: null,
+                email: enteredEmail,
+            },
+        })
+        const token = await generateVerificationToken(enteredEmail)
+
+        await sendVerificationEmail(token.email, token.token)
+
+        return {
+            success:
+                'Verification email has been sent, verify the email before changing it',
+        }
+    }
+
+    //----kept it here for update without verification --> development
+    // await db.user.update({
+    //     where: {
+    //         id: user?.id,
+    //     },
+    //     data: {
+    //         email: enteredEmail,
+    //     },
+    // })
+    // return {
+    //     success: 'successfully updated',
+    // }
 }
 export const userTwoFactorChange = async (status: boolean) => {
     const user = await currentUser()
+
+    if (user?.isOauth) return // oauth providers should not update these settings at all
 
     if (!user?.id) return false
 

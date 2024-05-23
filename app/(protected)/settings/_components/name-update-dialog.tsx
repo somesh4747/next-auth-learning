@@ -31,6 +31,7 @@ import { z } from 'zod'
 import { LoginSuccessElememt } from '@/components/login-success'
 import { LoginErrorElememt } from '@/components/login-error'
 import { useState, useTransition } from 'react'
+import { useSession } from 'next-auth/react'
 
 export function DialogForNameUpdate({
     triggerText,
@@ -49,6 +50,8 @@ export function DialogForNameUpdate({
 
     const [isPending, setTransition] = useTransition()
 
+    const { update } = useSession()
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -63,11 +66,16 @@ export function DialogForNameUpdate({
                     <form
                         onSubmit={form.handleSubmit((e) => {
                             setTransition(() => {
-                                userNameChange(e).then((data) => {
-                                    if (data.success) setSuccess(data.success)
+                                userNameChange(e)
+                                    .then((data) => {
+                                        if (data.success)
+                                            setSuccess(data.success)
 
-                                    if (data.error) setError(data.error)
-                                })
+                                        if (data.error) setError(data.error)
+                                    })
+                                    .then(() => {
+                                        update() //for session update
+                                    })
                             })
                         })}
                         className="flex flex-col gap-4 "

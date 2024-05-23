@@ -9,17 +9,22 @@ export const EmailVerification = async (token: string) => {
     if (!existingToken) {
         return { error: 'token does not exist' }
     }
-    
-    const existingUser = await getUserByEmail(existingToken.email)
 
+    const existingUser = await getUserByEmail(existingToken.email)
 
     if (new Date(existingToken?.expires) < new Date()) {
         return { error: 'token has expired' }
     }
 
+    console.log(existingUser)
+
+    if (!existingUser) {
+        return null
+    }
+
     await db.user.update({
         where: {
-            id: existingUser?.id,
+            id: existingUser.id,
         },
         data: {
             emailVerified: new Date(),

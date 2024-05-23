@@ -10,6 +10,8 @@ import { EmailVerification } from '@/actions/verification-action'
 import { LoginErrorElememt } from '@/components/login-error'
 import { LoginSuccessElememt } from '@/components/login-success'
 
+import { useRouter } from 'next/navigation'
+
 function varificationPage() {
     const params = useSearchParams()
     const token = params.get('token')
@@ -17,6 +19,8 @@ function varificationPage() {
     const [success, setSuccess] = useState<string>('')
     const [error, setError] = useState<string>('')
     const [verifyStatus, setVerifyStatus] = useState<boolean>(false)
+
+    const router = useRouter()
 
     return (
         <div>
@@ -41,12 +45,13 @@ function varificationPage() {
 
                                     setVerifyStatus(true)
                                     EmailVerification(token).then((data) => {
-                                        if (data.success) {
+                                        if (data?.success) {
                                             setVerifyStatus(false)
                                             setSuccess(data?.success)
+                                            router.push('/login')
                                         }
 
-                                        if (data.error) {
+                                        if (data?.error) {
                                             setVerifyStatus(false)
                                             setError(data?.error)
                                         }

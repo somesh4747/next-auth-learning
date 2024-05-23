@@ -27,6 +27,7 @@ import { z } from 'zod'
 import { LoginSuccessElememt } from '../../../../components/login-success'
 import { LoginErrorElememt } from '../../../../components/login-error'
 import { useState, useTransition } from 'react'
+import { useSession } from 'next-auth/react'
 
 interface dialogButtonProps {
     triggerText: string | undefined | null
@@ -49,10 +50,20 @@ export function DialogForEmailUpdate({
     const [error, setError] = useState<string | undefined>('')
     const [isPending, setTransition] = useTransition()
 
+    const { update } = useSession()
+
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline">{triggerText}</Button>
+                <Button
+                    variant="outline"
+                    onClick={() => {
+                        setSuccess('')
+                        setError('')
+                    }}
+                >
+                    {triggerText}
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -62,12 +73,19 @@ export function DialogForEmailUpdate({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((e) => {
+                            setSuccess('')
+                            setError('')
                             setTransition(() => {
-                                userEmailChange(e).then((data) => {
-                                    if (data.success) setSuccess(data.success)
+                                userEmailChange(e)
+                                    .then((data) => {
+                                        if (data?.success)
+                                            setSuccess(data?.success)
 
-                                    if (data.error) setError(data.error)
-                                })
+                                        if (data?.error) setError(data?.error)
+                                    })
+                                    .then(() => {
+                                        update() //for session update
+                                    })
                             })
                         })}
                         className="flex flex-col gap-4 "

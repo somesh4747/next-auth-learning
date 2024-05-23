@@ -60,9 +60,9 @@ export const {
             }
             return true
         },
-        async jwt({ token }) {
+        async jwt({ token, account }) {
             // console.log('called jwt');
-            
+
             if (!token.sub) {
                 return token
             }
@@ -77,11 +77,17 @@ export const {
             token.name = existingUser.name
             token.email = existingUser.email
 
+            //TODO: need to improve
+            const getProviderList = await db.account.findMany({
+                where: {
+                    userId: existingUser.id,
+                },
+            })
+            token.isOauth = getProviderList.length > 0 // extending the OAuth status for excluding changes while using OAuth
+
             return token
         },
         async session({ token, session }) {
-            // console.log('called session');
-
             if (token.sub && session.user) {
                 session.user.id = token.sub
             }
@@ -94,11 +100,15 @@ export const {
                     token.isTwofactorEnabled as boolean
             }
 
+            session.user.isOauth = token.isOauth as boolean
+
             //as JWT callback run first so it will change the tokens and we can implement those using the session callback
             if (session.user && token.email) {
                 session.user.name = token.name
                 session.user.email = token.email
             }
+
+            console.log(token)
 
             return session
         },

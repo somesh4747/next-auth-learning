@@ -5,13 +5,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ### tailwind, shadcn, next-auth, resendEmail, OAuth, zod, Prisma ORM -- Technologies used till now
 
 # Feature TODO:
-1. user can add account image
-2. new upadated email is already present or not ?
+1. user can add account image (with pop up)
+2. new upadated email is already present or not --> done
 3. reset password in settings page 
-4. 
+4. delete account 
 5.
 6.
-
 
 First, run the development server:
 

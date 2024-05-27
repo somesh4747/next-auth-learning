@@ -108,8 +108,6 @@ export const {
                 session.user.email = token.email
             }
 
-            console.log(token)
-
             return session
         },
     },

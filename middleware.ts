@@ -8,13 +8,13 @@ import {
     apiRoutes,
     publicRoutes,
 } from './routes'
-
+import { NextRequest, NextResponse } from 'next/server'
 
 export default auth((req) => {
     const { nextUrl } = req
     // console.log(req)
 
-    console.log(nextUrl.pathname)
+    // console.log(nextUrl.pathname)
 
     const isLoggedIn = !!req.auth
 
@@ -35,7 +35,16 @@ export default auth((req) => {
     }
 
     if (!isLoggedIn && !isPubliRoute) {
-        return Response.redirect(new URL('/login', nextUrl))
+        let callBackUrl = nextUrl.pathname
+
+        if (nextUrl.search) {
+            callBackUrl += nextUrl.search
+        }
+
+        const encodedUrl = encodeURIComponent(callBackUrl)
+        return Response.redirect(
+            new URL(`/login?callbackUrl=${encodedUrl}`, nextUrl)
+        )
     }
 
     return null

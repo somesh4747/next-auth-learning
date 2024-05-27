@@ -18,6 +18,7 @@ interface cardWapperProps {
     backButtonLabel: string
     backButtonHref: string
     showSocial?: boolean
+    className?: string
 }
 
 export default function CardWrapper({
@@ -26,9 +27,10 @@ export default function CardWrapper({
     backButtonHref,
     backButtonLabel,
     showSocial,
+    ...className
 }: cardWapperProps) {
     return (
-        <div className="flex justify-center items-center">
+        <div className={`flex justify-center items-center ${className}`}>
             <Card className="shadow-md w-[360px]">
                 <CardHeader>
                     <Header label={headerLabel}></Header>

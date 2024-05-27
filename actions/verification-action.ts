@@ -16,7 +16,7 @@ export const EmailVerification = async (token: string) => {
         return { error: 'token has expired' }
     }
 
-    console.log(existingUser)
+    // console.log(existingUser)
 
     if (!existingUser) {
         return null

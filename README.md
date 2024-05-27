@@ -6,11 +6,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 # Feature TODO:
 1. user can add account image (with pop up)
-2. new upadated email is already present or not --> done
+2. new upadated email is already present or not || only credential user can change email ans password--> done
 3. reset password in settings page 
-4. delete account 
-5.
-6.
+4. delete account --> done
+5. change user role (optional)
+6. profile picture show up with dialog(experimental)
+
 
 First, run the development server:
 

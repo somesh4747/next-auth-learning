@@ -14,10 +14,11 @@ import { useTransition } from 'react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
-import { useRouter } from 'next/router'
-import { UserButton } from '@/components/auth/user-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { FaUser } from 'react-icons/fa'
+import { DialogForProfilePictureUpdate } from '@/app/(protected)/settings/_components/profile-image-upload'
+import { DeleteUserAccountDialog } from '@/app/(protected)/settings/_components/delete-account-dialog'
+
 
 export default function SettingsPage() {
     const { toast } = useToast()
@@ -129,8 +130,22 @@ export default function SettingsPage() {
                                 </Avatar>
                             </div>
                         ) : (
-                            'no image'
+                            <div>
+                                <DialogForProfilePictureUpdate
+                                    triggerText={'Upload Image'}
+                                    dialogTitle="new photo upload"
+                                />
+                            </div>
                         )}
+                    </div>
+                    <div
+                        id="name"
+                        className="flex justify-between items-center w-full"
+                    >
+                        <p>Account</p>
+                        <div className="">
+                            <DeleteUserAccountDialog userId={user?.id} />
+                        </div>
                     </div>
                 </CardContent>
             </Card>

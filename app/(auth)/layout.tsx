@@ -1,5 +1,8 @@
+import { ThemeToggle } from '@/components/theme-button'
 import { Button } from '@/components/ui/button'
+
 import Link from 'next/link'
+import { ThemeProvider } from '@/components/theme-provider'
 
 export default function AuthLayout({
     children,
@@ -7,7 +10,7 @@ export default function AuthLayout({
     children: React.ReactNode
 }) {
     return (
-        <section className=" mt-2 space-y-3">
+        <div className=" mt-2 space-y-3">
             <nav className="flex gap-2 justify-center">
                 <Link href={'/login'}>
                     <Button>Login</Button>
@@ -18,9 +21,16 @@ export default function AuthLayout({
                 <Link href={'/'}>
                     <Button>Back to home</Button>
                 </Link>
+                <ThemeToggle />
             </nav>
-
-            {children}
-        </section>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                // disableTransitionOnChange
+            >
+                {children}
+            </ThemeProvider>
+        </div>
     )
 }

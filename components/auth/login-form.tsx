@@ -54,6 +54,8 @@ export default function LoginForm() {
             ? 'Email is already linked with another provider'
             : ''
 
+    const callbackUrl = params.get('callbackUrl')
+
     return (
         <CardWrapper
             headerLabel="Welcome back!!"
@@ -68,7 +70,7 @@ export default function LoginForm() {
                         setError('')
                         setSuccess('')
                         setTrasition(() => {
-                            login(e)
+                            login(e, callbackUrl)
                                 .then((data) => {
                                     if (data?.error) setError(data.error)
 

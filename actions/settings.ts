@@ -9,6 +9,7 @@ import { z } from 'zod'
 
 import { generateVerificationToken } from '@/lib/tokens'
 import { sendVerificationEmail } from '@/lib/mail'
+import { signOut } from '@/auth'
 
 export const userNameChange = async (
     values: z.infer<typeof userNameUpdateSchema>
@@ -118,4 +119,29 @@ export const userTwoFactorChange = async (status: boolean) => {
         },
     })
     return status // for toast control (UX: improved)
+}
+
+export const uploadProfilePicture = async (file: File) => {
+    //
+    // const data = file.get('file') as File
+
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    console.log(buffer)
+
+    // return {
+    //     success: 'successfully uploaded',
+    // }
+}
+
+export async function deleteUserAccount(userId: string | undefined) {
+    await db.user.delete({
+        where: {
+            id: userId,
+        },
+    })
+
+    await signOut({
+        redirectTo: '/',
+    })
 }

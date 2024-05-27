@@ -9,7 +9,7 @@ interface headerProps {
 export default function Header({ label }: headerProps) {
     return (
         <div className="flex flex-col justify-center items-center">
-            <h3 className="text-3xl font-bold">Auth</h3>
+            <h3 className="custom-text font-bold">Auth</h3>
             <div className="text-muted-foreground text-sm">{label}</div>
         </div>
     )

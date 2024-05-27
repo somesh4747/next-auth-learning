@@ -2,7 +2,7 @@ import { CheckCircledIcon, CheckboxIcon } from '@radix-ui/react-icons'
 
 
 interface LoginSuccessProps {
-    message?: string
+    message?: string | null | undefined
 }
 
 export const LoginSuccessElememt = ({ message }: LoginSuccessProps) => {

@@ -20,15 +20,12 @@ import { resetPageScheme } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
-import { useSearchParams } from 'next/navigation'
-import { passwordReset, resetMailSend } from '@/actions/pass-reset'
+import { resetMailSend } from '@/actions/pass-reset'
 
-function sendResetMailPage() {
+function SendResetMailPage() {
     const [isPending, setTrasition] = useTransition()
     const [success, setSuccess] = useState<string | null>('')
     const [error, setError] = useState<string>('')
-
-    const param = useSearchParams()
 
     const form = useForm<z.infer<typeof resetPageScheme>>({
         resolver: zodResolver(resetPageScheme),
@@ -91,4 +88,4 @@ function sendResetMailPage() {
     )
 }
 
-export default sendResetMailPage
+export default SendResetMailPage

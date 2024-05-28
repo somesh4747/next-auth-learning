@@ -8,7 +8,6 @@ import {
     apiRoutes,
     publicRoutes,
 } from './routes'
-import { NextRequest, NextResponse } from 'next/server'
 
 export default auth((req) => {
     const { nextUrl } = req
@@ -24,14 +23,14 @@ export default auth((req) => {
 
     const isAuthRoute = authRoutes.includes(nextUrl.pathname)
 
-    if (isAPIauthRoute) return null
+    if (isAPIauthRoute) return
 
     if (isAuthRoute) {
         if (isLoggedIn) {
             return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
         }
 
-        return null
+        return
     }
 
     if (!isLoggedIn && !isPubliRoute) {
@@ -47,7 +46,7 @@ export default auth((req) => {
         )
     }
 
-    return null
+    return
 })
 
 // Optionally, don't invoke Middleware on some paths

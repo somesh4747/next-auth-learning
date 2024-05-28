@@ -1,5 +1,6 @@
 import { extendedUser } from '@/next-auth'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Session, User } from 'next-auth'
 
 interface userInfoProps {
     user?: extendedUser
@@ -36,12 +37,10 @@ export const ShowUserInfo = ({ user, label }: userInfoProps) => {
                     </div>
                     <div className="w-full" id="isTwofactorEnabled">
                         <p className="truncate font-mono bg-slate-700 p-2 rounded-sm">
-                            2FA status : {user?.isTwofactorEnabled ? 'ON' : 'OFF'} 
+                            2FA status :{' '}
+                            {user?.isTwofactorEnabled ? 'ON' : 'OFF'}
                         </p>
                     </div>
-                    
-                  
-                    
                 </CardContent>
             </Card>
         </div>

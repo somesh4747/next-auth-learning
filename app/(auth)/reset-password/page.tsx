@@ -26,8 +26,8 @@ import { useRouter } from 'next/navigation'
 
 function PasswordResetPage() {
     const [isPending, setTrasition] = useTransition()
-    const [success, setSuccess] = useState<string>('')
-    const [error, setError] = useState<string>('')
+    const [success, setSuccess] = useState<string | undefined>('')
+    const [error, setError] = useState<string | undefined>('')
     const router = useRouter()
 
     const param = useSearchParams()

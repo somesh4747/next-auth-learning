@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 
 import Link from 'next/link'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Suspense } from 'react'
 
 export default function AuthLayout({
     children,
@@ -23,14 +24,7 @@ export default function AuthLayout({
                 </Link>
                 <ThemeToggle />
             </nav>
-            <ThemeProvider
-                attribute="class"
-                defaultTheme="dark"
-                enableSystem
-                // disableTransitionOnChange
-            >
-                {children}
-            </ThemeProvider>
+            <Suspense>{children}</Suspense>
         </div>
     )
 }

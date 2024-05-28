@@ -12,7 +12,7 @@ import { LoginSuccessElememt } from '@/components/login-success'
 
 import { useRouter } from 'next/navigation'
 
-function varificationPage() {
+function VarificationPage() {
     const params = useSearchParams()
     const token = params.get('token')
 
@@ -70,4 +70,4 @@ function varificationPage() {
     )
 }
 
-export default varificationPage
+export default VarificationPage

@@ -36,7 +36,7 @@ export default function LoginForm() {
         },
     })
 
-    const emailRef = useRef(null)
+    const emailRef = useRef<any>(null)
 
     const [isPending, setTrasition] = useTransition() // transition for login function
     const [success, setSuccess] = useState<string>('')
@@ -57,175 +57,181 @@ export default function LoginForm() {
     const callbackUrl = params.get('callbackUrl')
 
     return (
-        <CardWrapper
-            headerLabel="Welcome back!!"
-            backButtonHref="/register"
-            backButtonLabel="Don't have an account"
-            showSocial
-        >
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit((e) => {
-                        //
-                        setError('')
-                        setSuccess('')
-                        setTrasition(() => {
-                            login(e, callbackUrl)
-                                .then((data) => {
-                                    if (data?.error) setError(data.error)
+        <>
+            <CardWrapper
+                headerLabel="Welcome back!!"
+                backButtonHref="/register"
+                backButtonLabel="Don't have an account"
+                showSocial
+            >
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit((e) => {
+                            //
+                            setError('')
+                            setSuccess('')
+                            setTrasition(() => {
+                                login(e, callbackUrl)
+                                    .then((data) => {
+                                        if (data?.error) setError(data.error)
 
-                                    if (data?.success) setSuccess(data.success)
+                                        if (data?.success)
+                                            setSuccess(data.success)
 
-                                    if (data?.twoFactorStatus) {
-                                        setShowTwofactor(true)
-                                    }
-                                })
-                                .catch(() => setError('something went wrong'))
-                        })
-                    })}
-                >
-                    <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                        if (data?.twoFactorStatus) {
+                                            setShowTwofactor(true)
+                                        }
+                                    })
+                                    .catch(() =>
+                                        setError('something went wrong')
+                                    )
+                            })
+                        })}
+                    >
+                        <div className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
 
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            ref={emailRef}
-                                            placeholder="somesh@email.com"
-                                            type="email"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                ref={emailRef}
+                                                placeholder="somesh@email.com"
+                                                type="email"
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="****"
+                                                type="password"
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <br />
+                            <Link href={'/reset'} className="hover:underline ">
+                                Reset Password?
+                            </Link>
+
+                            {showTwofactor ? (
+                                <>
+                                    <FormField
+                                        control={form.control}
+                                        name="code"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>code</FormLabel>
+
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="123456"
+                                                        type="number"
+                                                        disabled={isPending}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </>
+                            ) : (
+                                ''
                             )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                            {showTwofactor ? (
+                                <>
+                                    <Button
+                                        variant={'secondary'}
+                                        disabled={is2FaPending}
+                                        type="button"
+                                        onClick={async () => {
+                                            setSuccess('')
+                                            setError('')
 
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="****"
-                                            type="password"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
+                                            //sending 2fa mail usign useRef due limitation of form handing
+                                            if (!emailRef.current) return
 
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <br />
-                        <Link href={'/reset'} className="hover:underline ">
-                            Reset Password?
-                        </Link>
+                                            const email = emailRef.current.value //weired error
 
-                        {showTwofactor ? (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="code"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>code</FormLabel>
-
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder="123456"
-                                                    type="number"
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
-                        ) : (
-                            ''
-                        )}
-                        {showTwofactor ? (
-                            <>
-                                <Button
-                                    variant={'secondary'}
-                                    disabled={is2FaPending}
-                                    type="button"
-                                    onClick={async () => {
-                                        setSuccess('')
-                                        setError('')
-
-                                        //sending 2fa mail usign useRef due limitation of form handing
-                                        if (!emailRef.current) return
-
-                                        const email = emailRef.current.value
-
-                                        twoFactorHandleFunction(email, '').then(
-                                            (data) => {
+                                            twoFactorHandleFunction(
+                                                email,
+                                                ''
+                                            ).then((data) => {
                                                 if (data?.error)
                                                     setError(data.error)
 
                                                 if (data?.success)
                                                     setSuccess(data.success)
-                                            }
-                                        )
-                                        //managing the whole timer for resend 2FA mail
-                                        set2FaTransition(true)
-                                        const interval = setInterval(() => {
-                                            set2faSecond(
-                                                (prevSec) => prevSec - 1
-                                            )
-                                        }, 1000)
-                                        await new Promise((res) => {
-                                            setTimeout(() => {
-                                                res(true)
-                                            }, 60000)
-                                        })
-                                        clearInterval(interval)
-                                        set2FaTransition(false)
-                                        set2faSecond(60)
-                                    }}
-                                >
-                                    {is2FaPending ? (
-                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : (
-                                        ''
-                                    )}
-                                    {is2FaPending ? (
-                                        <>{Second2fa}s</>
-                                    ) : (
-                                        'Resend mail'
-                                    )}
-                                </Button>
-                            </>
-                        ) : (
-                            <></>
-                        )}
+                                            })
+                                            //managing the whole timer for resend 2FA mail
+                                            set2FaTransition(true)
+                                            const interval = setInterval(() => {
+                                                set2faSecond(
+                                                    (prevSec) => prevSec - 1
+                                                )
+                                            }, 1000)
+                                            await new Promise((res) => {
+                                                setTimeout(() => {
+                                                    res(true)
+                                                }, 60000)
+                                            })
+                                            clearInterval(interval)
+                                            set2FaTransition(false)
+                                            set2faSecond(60)
+                                        }}
+                                    >
+                                        {is2FaPending ? (
+                                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            ''
+                                        )}
+                                        {is2FaPending ? (
+                                            <>{Second2fa}s</>
+                                        ) : (
+                                            'Resend mail'
+                                        )}
+                                    </Button>
+                                </>
+                            ) : (
+                                <></>
+                            )}
 
-                        <LoginSuccessElememt message={success} />
-                        <LoginErrorElememt
-                            message={error || providerEmailExisted}
-                        />
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isPending}
-                        >
-                            {showTwofactor ? 'Authenticate' : 'Login'}
-                        </Button>
-                    </div>
-                </form>
-            </Form>
-        </CardWrapper>
+                            <LoginSuccessElememt message={success} />
+                            <LoginErrorElememt
+                                message={error || providerEmailExisted}
+                            />
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={isPending}
+                            >
+                                {showTwofactor ? 'Authenticate' : 'Login'}
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </CardWrapper>
+        </>
     )
 }

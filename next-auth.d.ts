@@ -5,7 +5,11 @@ import NextAuth, { type DefaultSession } from 'next-auth'
 export type extendedUser = DefaultSession['user'] & {
     role: userRole
     isTwofactorEnabled: boolean
-    OAuth: boolean
+    id: string
+    name: string | null | undefined
+    email: string
+    image: string | null
+    isOauth: boolean
 }
 
 declare module 'next-auth' {

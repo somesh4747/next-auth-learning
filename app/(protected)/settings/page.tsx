@@ -19,7 +19,6 @@ import { FaUser } from 'react-icons/fa'
 import { DialogForProfilePictureUpdate } from '@/app/(protected)/settings/_components/profile-image-upload'
 import { DeleteUserAccountDialog } from '@/app/(protected)/settings/_components/delete-account-dialog'
 
-
 export default function SettingsPage() {
     const { toast } = useToast()
     const user = useCurrentUser()
@@ -121,13 +120,20 @@ export default function SettingsPage() {
                     >
                         <p>Image</p>
                         {user?.image ? (
-                            <div>
-                                <Avatar>
-                                    <AvatarImage src={user?.image || ''} />
-                                    <AvatarFallback className="bg-green-500 ">
-                                        <FaUser className="text-white" />
-                                    </AvatarFallback>
-                                </Avatar>
+                            <div className="cursor-pointer">
+                                <DialogForProfilePictureUpdate
+                                    triggerText={
+                                        <Avatar title="change image">
+                                            <AvatarImage
+                                                src={user?.image || ''}
+                                            />
+                                            <AvatarFallback className="bg-green-500 ">
+                                                <FaUser className="text-white" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    }
+                                    dialogTitle="new photo upload"
+                                />
                             </div>
                         ) : (
                             <div>

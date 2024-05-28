@@ -11,6 +11,9 @@ import { generateVerificationToken } from '@/lib/tokens'
 import { sendVerificationEmail } from '@/lib/mail'
 import { signOut } from '@/auth'
 
+//for uploading assets in vercel blob
+import { del, put } from '@vercel/blob'
+
 export const userNameChange = async (
     values: z.infer<typeof userNameUpdateSchema>
 ) => {
@@ -121,17 +124,35 @@ export const userTwoFactorChange = async (status: boolean) => {
     return status // for toast control (UX: improved)
 }
 
-export const uploadProfilePicture = async (file: File) => {
-    //
-    // const data = file.get('file') as File
+export const uploadProfilePicture = async (data: FormData) => {
+    const user = await currentUser()
+    if (!user) return { error: 'somthing went wrong' }
+    const imageFile = data.get('file') as File
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    console.log(buffer)
+    if (user.image) {
+        const blobDelete = await del(user.image) //deleting the blob if the image is already present
+    }
 
-    // return {
-    //     success: 'successfully uploaded',
-    // }
+    const blob = await put(imageFile.name, imageFile, {
+        access: 'public',
+    })
+
+    if (!blob) return { error: 'somthing went wrong' }
+
+    const { url } = blob
+
+    await db.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            image: url,
+        },
+    })
+
+    return {
+        success: 'image uploaded Successfully',
+    }
 }
 
 export async function deleteUserAccount(userId: string | undefined) {

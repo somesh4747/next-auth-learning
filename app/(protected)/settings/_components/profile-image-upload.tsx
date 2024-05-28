@@ -13,12 +13,12 @@ import { Input } from '@/components/ui/input'
 
 import { LoginSuccessElememt } from '../../../../components/login-success'
 import { LoginErrorElememt } from '../../../../components/login-error'
-import { useState, useTransition } from 'react'
+import { ReactElement, useState, useTransition } from 'react'
 import { useSession } from 'next-auth/react'
 import { uploadProfilePicture } from '@/actions/settings'
 
 interface dialogButtonProps {
-    triggerText: string | undefined | null
+    triggerText: string | undefined | null | ReactElement
     dialogTitle?: string
     dialogDescription?: string
 }
@@ -30,22 +30,12 @@ export function DialogForProfilePictureUpdate({
     const [success, setSuccess] = useState<string | undefined>('')
     const [error, setError] = useState<string | undefined>('')
     const [isPending, setTransition] = useTransition()
-
+    const { update } = useSession()
     const [fileState, setFile] = useState<File>()
 
     return (
         <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    onClick={() => {
-                        setSuccess('')
-                        setError('')
-                    }}
-                >
-                    {triggerText}
-                </Button>
-            </DialogTrigger>
+            <DialogTrigger asChild>{triggerText}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{dialogTitle}</DialogTitle>
@@ -57,35 +47,33 @@ export function DialogForProfilePictureUpdate({
                         setSuccess('')
                         setError('')
                         e.preventDefault()
-                        // console.log(fileState)
                         const file: File | undefined = fileState
                         if (!file) return null
-                        const data = new FormData()
-                        data.set('file', file)
-                        try {
-                            const res = await fetch('api/photo-upload', {
-                                method: 'POST',
-                                body: data,
+                        const imageData = new FormData()
+                        imageData.set('file', file)
+                        setTransition(() => {
+                            uploadProfilePicture(imageData).then((data) => {
+                                if (data?.success) setSuccess(data?.success)
+                                if (data?.error) setError(data?.error)
+ 
+                                update() //// for client session update
                             })
-                            if (!res.ok) {
-                                setError('something went wrong')
-                            }
-                        } catch (e: any) {
-                            // Handle errors here
-                            // console.error(e)
-                        }
+                        })
 
-                        // uploadProfilePicture(file).then((data) => {
-                        //     console.log(data)
-                        // })
-                        // .then((data) => {
-                        //     if (data?.success)
-                        //         setSuccess(data?.success)
-                        //     if (data?.error) setError(data?.error)
-                        // })
-                        // .then(() => {
-                        //     update() //for session update
-                        // })
+                        //++++++++++ experimental for api/photo-upload (without server actions) +++++++++
+                        // try {
+                        //     const res = await fetch('api/photo-upload', {
+                        //         method: 'POST',
+                        //         body: imageData,
+                        //     })
+                        //     if (!res.ok) {
+                        //         setError('something went wrong')
+                        //     }
+                        // } catch (e: any) {
+                        //     // Handle errors here
+                        //     // console.error(e)
+                        // }
+                        // +++++++++++++++++++++++++++++ experimental ++++++++++++++++++++++++++++
                     }}
                     className="flex flex-col gap-4 "
                 >

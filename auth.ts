@@ -76,6 +76,7 @@ export const {
             //this will change userName and email when 'api/auth/session' is called during a update in '/settings' page
             token.name = existingUser.name
             token.email = existingUser.email
+            token.image = existingUser.image
 
             //TODO: need to improve
             const getProviderList = await db.account.findMany({
@@ -106,6 +107,7 @@ export const {
             if (session.user && token.email) {
                 session.user.name = token.name
                 session.user.email = token.email
+                session.user.image = token.image
             }
 
             return session

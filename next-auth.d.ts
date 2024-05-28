@@ -24,7 +24,7 @@ declare module 'next-auth' {
             id: string
             name: string | null | undefined
             email: string
-            image: string | null
+            image: string | null | any
             isOauth: boolean
         }
     }

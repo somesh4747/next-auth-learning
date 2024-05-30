@@ -35,7 +35,7 @@ export function DialogForProfilePictureUpdate({
 
     return (
         <Dialog>
-            <DialogTrigger asChild>{triggerText}</DialogTrigger>
+            <DialogTrigger>{triggerText}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{dialogTitle}</DialogTitle>
@@ -55,7 +55,7 @@ export function DialogForProfilePictureUpdate({
                             uploadProfilePicture(imageData).then((data) => {
                                 if (data?.success) setSuccess(data?.success)
                                 if (data?.error) setError(data?.error)
- 
+
                                 update() //// for client session update
                             })
                         })

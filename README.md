@@ -15,6 +15,15 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 7. vercel blob storage from server action to API route for higher size image upload (limited sized should be upload or image quality downgrader)
 8. feature : user image crop before upload
 
+---------------------------------------------------------------------------<>-------------------------------------------------------------------------------
+> Home page
+
+![home page](https://github.com/somesh4747/next-auth-learning/assets/109422834/153983e8-9113-4940-a9d1-8597875e8b5d)
+
+> Login page 
+
+![login page](https://github.com/somesh4747/next-auth-learning/assets/109422834/6e528f5d-6799-4d9d-8e28-67132072a42a)
+
 
 
 ## Deployed on Vercel
